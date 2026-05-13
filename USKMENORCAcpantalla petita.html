@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Mapa de prueba</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+  <style>
+    #map {height: 150px;
+          width:50px;}
+    }
+  </style>
+</head>
+<body>
+
+<h2>Mapa funcionando</h2>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  var map = L.map('map');
+  
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+var bounds = [];
+
+fetch('https://opensheet.elk.sh/1zvNr6D3uh8mJEwwliuzjcEE2HmD3oISSQ_-Uqq3uKU0/Sheet1')
+  .then(response => response.json())
+  .then(lugares => {
+
+    lugares.forEach(function(lugar) {
+
+      var marker = L.marker([lugar.lat, lugar.lng]).addTo(map);
+
+bounds.push([
+  parseFloat(lugar.lat),
+  parseFloat(lugar.lng)
+]);
+
+      marker.bindPopup(`
+        <div style="text-align:center;">
+          <h3>${lugar.nombre}</h3>
+          <img src="${lugar.imagen}" style="width:200px; border-radius:10px;"><br><br>
+          <a href="${lugar.url}" target="_blank">Leer entrada al Blog</a>
+        </div>
+      `);
+
+    });
+map.fitBounds(bounds);
+  });
+
+</script>
+
+</body>
+</html>
